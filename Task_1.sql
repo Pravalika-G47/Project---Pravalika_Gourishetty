@@ -3,6 +3,7 @@
 create database student_database;
 use student_database;
 
+
 --a)	Creating table StudentInfo:
 Create table StudentInfo (
 STU_ID int, 
@@ -52,9 +53,9 @@ Insert Into CourseInfo(COURSE_ID,COURSE_NAME, COURSE_INSTRUCTOR_NAME) values
 
 insert into EnrollmentInfo(ENROLLMENT_ID, STU_ID, COURSE_ID, ENROLL_STATUS) values 
 (10001, 101, 001,'ENROLLED'),
-(10002, 103, 002,'ENROLLED'),
-(10003, 104, 004,'ENROLLED'),
-(10004, 102, 003,'ENROLLED'),
+(10002, 103, 001,'ENROLLED'),
+(10003, 104, 002,'ENROLLED'),
+(10004, 102, 004,'ENROLLED'),
 (10005, 105, 003,'NOT ENROLLED'),
 (10006, 106, 005,'ENROLLED');
 
@@ -104,7 +105,7 @@ Select * From StudentInfo;
 --a) Write a query to retrieve the number of students enrolled in each course
 
 Select c.Course_Name , 
-count(c.course_id) as numberofStudents
+count(e.stu_id) as numberofStudents
 from CourseInfo c join EnrollmentInfo e
 on c.course_id=e.course_ID
 where e.enroll_status = 'ENROLLED'
@@ -116,7 +117,8 @@ select e.COURSE_ID,
 c.COURSE_NAME, 
 s.STU_NAME
 from CourseInfo c join EnrollmentInfo e on c.course_id=e.course_ID 
-join StudentInfo s on s.STU_ID = e.STU_ID where e.enroll_status = 'ENROLLED';
+join StudentInfo s on s.STU_ID = e.STU_ID 
+where e.enroll_status = 'ENROLLED' and c.COURSE_NAME = 'SQL';
 
 --c) Write a query to retrieve the count of enrolled students for each instructor
 
@@ -128,19 +130,20 @@ group by 1;
 
 --d) Write a query to retrieve the list of students who are enrolled in a multiple course
 
-Select e.stu_id , count(c.course_id) as numberofStud
+Select e.stu_id , count(c.course_id) 
 from CourseInfo c join EnrollmentInfo e
 on c.course_id=e.course_ID
 where e.enroll_status = 'ENROLLED'
 group by 1
 having count(c.course_id) >1
+
 
 --e)  Write a query to retrieve the courses that have the highest number of enrolled students(arranging from highest to lowest)
 
-Select e.stu_id , count(c.course_id) as numberofStud
+Select c.course_id,c.COURSE_NAME,count(e.stu_id) as numberofStud
 from CourseInfo c join EnrollmentInfo e
 on c.course_id=e.course_ID
 where e.enroll_status = 'ENROLLED'
-group by 1
-having count(c.course_id) >1
-order by count(c.course_id) desc
+group by 1,2
+having count(e.stu_id) >=1
+order by count(e.stu_id) desc
